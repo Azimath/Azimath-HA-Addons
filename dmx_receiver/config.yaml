@@ -1,0 +1,22 @@
+name: "DMX Receiver"
+description: "Listen for ACN DMX messages over UDP"
+version: "1.0.6"
+slug: "dmx_receiver"
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+ports:
+  5568/udp: 5568
+schema:
+  map:
+    - entity: str
+      channels:
+        - int(1,512)
+  universe: int(1,64000)
+options:
+  universe: 1
+homeassistant_api: true
