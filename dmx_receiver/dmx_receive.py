@@ -13,6 +13,8 @@ if "SUPERVISOR_TOKEN" not in os.environ:
 
 options = None
 
+standalone = True
+
 HAURL = "http://supervisor/core/api"
 if len(sys.argv) > 1:
     # Running standalone
@@ -21,8 +23,13 @@ if len(sys.argv) > 1:
         options = json.load(optionsfile)
 else:
     # Running under homeassistant
+    standalone = False
     with open("/data/options.json", "r") as optionsfile:
         options = json.load(optionsfile)
+
+def log(thing):
+    if standalone:
+        print(thing)
 
 map = options["map"]
 universe = options["universe"]
@@ -36,32 +43,32 @@ def createFloatCaller(entity, channels, mode):
             value = dmxData[channels[0]-1]
             if value == 0:
                 light.turn_off(entity_id=entity)
-                print(f"Set {entity} to off")
+                log(f"Set {entity} to off")
             else:
                 data = {mode : value}
-                light.turn_on(entity_id=entity, **data)
-                print(f"Set {entity} to {value}")
+                light.turn_on(entity_id=entity, transition=0.0, **data)
+                log(f"Set {entity} to {value}")
         return caller
     else:
         def caller(dmxData):
             values = [dmxData[c-1] for c in channels]
             if sum(values) == 0:
                 light.turn_off(entity_id=entity)
-                print(f"Set {entity} to off")
+                log(f"Set {entity} to off")
             else:
                 data = {mode : values}
-                light.turn_on(entity_id=entity, **data)
-                print(f"Set {entity} to {values}")
+                light.turn_on(entity_id=entity, transition=0.0, **data)
+                log(f"Set {entity} to {values}")
         return caller
 
 def createBinaryCaller(entity, channel):
     def caller(dmxData):
         if dmxData[channel-1] < 127:
             light.turn_off(entity_id=entity)
-            print(f"Set {entity} to off")
+            log(f"Set {entity} to off")
         else:
             light.turn_on(entity_id=entity)
-            print(f"Set {entity} to on")
+            log(f"Set {entity} to on")
     return caller
 
 with Client(HAURL, os.environ["SUPERVISOR_TOKEN"]) as client:
@@ -104,7 +111,7 @@ with Client(HAURL, os.environ["SUPERVISOR_TOKEN"]) as client:
     # define ACN callback function
     @receiver.listen_on('universe', universe=universe)  # listen
     def callback(packet):  # packet type: sacn.DataPacket
-        print("Got dmx data!")
+        log("Got dmx data!")
         for c in callers:
             c(packet.dmxData)
 
