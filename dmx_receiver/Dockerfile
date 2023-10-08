@@ -19,7 +19,7 @@ WORKDIR /data
 RUN pip3 install --no-cache-dir wheel
 
 RUN pip3 install --no-cache-dir sacn
-RUN pip3 install --no-cache-dir git+https://github.com/GrandMoff100/HomeAssistantAPI.git@168fced16444b2600bbd6b3b8f10990d7f1a09e3
+RUN pip3 install --no-cache-dir homeassistant-api
 
 # Copy data for add-on
 COPY run.sh /
