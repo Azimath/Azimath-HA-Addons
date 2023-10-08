@@ -1,6 +1,6 @@
 name: "DMX Receiver"
 description: "Listen for ACN DMX messages over UDP"
-version: "1.0.6"
+version: "1.0.7"
 slug: "dmx_receiver"
 init: false
 arch:
