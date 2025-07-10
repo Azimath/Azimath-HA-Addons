@@ -16,10 +16,10 @@ RUN \
 # So let's set it to our add-on persistent data directory.
 WORKDIR /data
 
-RUN pip3 install --no-cache-dir wheel
+RUN python -m pip install --break-system-packages --no-cache-dir wheel
 
-RUN pip3 install --no-cache-dir sacn
-RUN pip3 install --no-cache-dir homeassistant-api
+RUN python -m pip install --break-system-packages --no-cache-dir sacn
+RUN python -m pip install --break-system-packages --no-cache-dir homeassistant-api
 
 # Copy data for add-on
 COPY run.sh /
